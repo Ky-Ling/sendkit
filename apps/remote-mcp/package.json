@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@clerk/backend": "^3.26.4",
+    "@clerk/mcp-tools": "^0.7.0",
     "@modelcontextprotocol/server": "^2.4.0",
     "hono": "^4.13.14",
     "sendkit-mcp-tools": "workspace:*"
