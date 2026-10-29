@@ -13,6 +13,18 @@
         "typescript-eslint": "^8.72.1",
       },
     },
+    "apps/remote-mcp": {
+      "name": "sendkit-remote-mcp",
+      "version": "0.0.0",
+      "dependencies": {
+        "@modelcontextprotocol/server": "^2.4.0",
+        "hono": "^4.13.14",
+        "sendkit-mcp-tools": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/node": "^26.6.6",
+      },
+    },
     "packages/cli": {
       "name": "sendkit",
       "version": "0.0.0",
@@ -36,6 +48,17 @@
     },
     "packages/local-mcp": {
       "name": "sendkit-local-mcp",
+      "version": "0.0.0",
+      "dependencies": {
+        "@modelcontextprotocol/server": "^2.4.0",
+        "sendkit-mcp-tools": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/node": "^26.6.6",
+      },
+    },
+    "packages/mcp-tools": {
+      "name": "sendkit-mcp-tools",
       "version": "0.0.0",
       "dependencies": {
         "@modelcontextprotocol/server": "^2.4.0",
@@ -176,6 +199,8 @@
 
     "hashery": ["hashery@1.5.1", "", { "dependencies": { "hookified": "^1.15.0" } }, "sha512-iZyKG96/JwPz1N55vj2Ie2vXbhu440zfUfJvSwEqEbeLluk7NnapfGqa7LH0mOsnDxTF85Mx8/dyR6HfqcbmbQ=="],
 
+    "hono": ["hono@4.13.14", "", {}, "sha512-yhRLQ21U6qa9Hsu2N7Qcbh8tE+WKEcoErjIo56LeSGiGXGp9sA7UpE86Ui9uexb61KakiGwuHMn2QdV7w6i6kQ=="],
+
     "hookified": ["hookified@1.15.1", "", {}, "sha512-MvG/clsADq1GPM2KGo2nyfaWVyn9naPiXrqIe4jYjXNZQt238kWyOGrsyc/DmRAQ+Re6yeo6yX/yoNCG5KAEVg=="],
 
     "ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
@@ -229,6 +254,10 @@
     "sendkit-core": ["sendkit-core@workspace:packages/core"],
 
     "sendkit-local-mcp": ["sendkit-local-mcp@workspace:packages/local-mcp"],
+
+    "sendkit-mcp-tools": ["sendkit-mcp-tools@workspace:packages/mcp-tools"],
+
+    "sendkit-remote-mcp": ["sendkit-remote-mcp@workspace:apps/remote-mcp"],
 
     "shebang-command": ["shebang-command@2.0.0", "", { "dependencies": { "shebang-regex": "^3.0.0" } }, "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA=="],
 
