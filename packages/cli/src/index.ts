@@ -1,22 +1,19 @@
 import { Command } from "commander"
-
-type TelegramResponseType = {
-  ok: boolean
-  result?: {
-    message_id?: number
-  }
-  description?: string
-}
+import { sendTelegramMessage, telegramMessageOptionsSchema } from "sendkit-core"
 
 const program = new Command()
 
-program 
+program
   .name("sendkit")
   .description("Sendkit tutorial CLI")
+  // Required by passThroughOptions() on the subcommand below
+  .enablePositionalOptions()
   .command("telegram")
   .description("Send a Telegram message")
   .argument("<chatId>", "Telegram Chat ID")
   .argument("<message>", "Message text to send")
+  // Stop parsing options after <chatId>, so a message like "-hello" or "--help" is sent as text
+  .passThroughOptions()
   .action(async (chatId: string, message: string) => {
     const token = process.env.TELEGRAM_BOT_TOKEN
 
@@ -25,55 +22,30 @@ program
       process.exit(1)
     }
 
-    // Numeric ID (negative for groups) or a public @channelusername
-    if (!/^-?\d+$/.test(chatId) && !/^@\w{5,}$/.test(chatId)) {
-      console.error(`Invalid chatId "${chatId}". Use a numeric ID or @channelusername.`)
+    // Validate here so bad arguments print a readable message instead of a raw ZodError
+    const input = telegramMessageOptionsSchema.safeParse({ chatId, message, botToken: token })
+
+    if (!input.success) {
+      for (const issue of input.error.issues) {
+        console.error(`Invalid ${issue.path.join(".")}: ${issue.message}`)
+      }
       process.exit(1)
     }
 
-    if (!message.trim()) {
-      console.error("Message cannot be empty.")
-      process.exit(1)
-    }
-
-    if (message.length > 4096) {
-      console.error(`Message is ${message.length} characters; Telegram allows at most 4096.`)
-      process.exit(1)
-    }
-
-    let response: Response
+    console.log(`Sending message to ${input.data.chatId}...`)
 
     try {
-      response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ chat_id: chatId, text: message })
-        }
-      )
+      const result = await sendTelegramMessage(input.data)
+
+      console.log("Message sent")
+      console.log(`  Message ID: ${result.messageId}`)
+      console.log(`  Chat ID:    ${result.chatId}`)
+      console.log(`  Sent at:    ${result.sentAt.toLocaleString()}`)
     } catch (error) {
-      // Only print the message: the request URL contains the bot token
-      console.error(`Could not reach Telegram: ${(error as Error).message}`)
+      // Safe to print: sendTelegramMessage never puts the bot token in its errors
+      console.error(`Failed to send message: ${(error as Error).message}`)
       process.exit(1)
-    }
-
-    // Telegram returns a JSON body with `ok` and `description` even on 4xx errors
-    const data = (await response.json().catch(() => null)) as TelegramResponseType | null
-
-    if (!response.ok || !data?.ok) {
-      console.error(`Telegram API error (${response.status}): ${data?.description ?? response.statusText}`)
-      process.exit(1)
-    }
-
-    const messageId = data.result?.message_id
-
-    console.log(`Message sent (message_id: ${messageId})`)
-
-    if (messageId !== undefined) {
-      console.log(`Telegram message id: ${messageId}`)
     }
   })
 
-  program.parseAsync(process.argv)
+program.parseAsync(process.argv)
