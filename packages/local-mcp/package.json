@@ -1,0 +1,14 @@
+{
+  "name": "sendkit-local-mcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
+    "zod": "^4.6.7",
+    "sendkit-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6"
+  }
+}
