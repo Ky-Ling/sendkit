@@ -1,11 +1,23 @@
 {
   "name": "@mirid-dev/sendkit-local-mcp",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1",
+  "description": "Local stdio MCP server that lets AI clients send Telegram messages via SendKit",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ky-Ling/sendkit.git",
+    "directory": "packages/local-mcp"
+  },
+  "bin": {
+    "sendkit-local-mcp": "./dist/index.js"
+  },
   "files": [
     "dist"
   ],
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "pack:dry": "bun run build && bun pm pack --dry-run",
@@ -14,5 +26,8 @@
   "dependencies": {
     "@mirid-dev/sendkit-mcp-tools": "workspace:*",
     "@modelcontextprotocol/server": "^2.4.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

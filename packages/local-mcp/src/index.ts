@@ -1,11 +1,14 @@
+#!/usr/bin/env node
 import { McpServer } from '@modelcontextprotocol/server'
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
 
 import { registerTelegramTool } from '@mirid-dev/sendkit-mcp-tools'
 
+import { version } from '../package.json' with { type: 'json' }
+
 const server = new McpServer({
   name: 'sendkit-local-mcp',
-  version: '0.0.0',
+  version,
 })
 
 function getTelegramBotToken() {

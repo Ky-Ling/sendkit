@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "customConditions": ["source"],
+    "resolveJsonModule": true,
     "strict": true,
     "types": ["node"],
     "skipLibCheck": true

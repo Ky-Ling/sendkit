@@ -6,6 +6,8 @@ import { generateClerkProtectedResourceMetadata } from '@clerk/mcp-tools/server'
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server'
 import { registerTelegramTool } from '@mirid-dev/sendkit-mcp-tools'
 
+import { version } from '../package.json' with { type: 'json' }
+
 const clerkPublishableKey = process.env.CLERK_PUBLISHABLE_KEY
 const clerkSecretKey = process.env.CLERK_SECRET_KEY
 
@@ -25,7 +27,7 @@ const clerkClient = createClerkClient({
 function createServer(botToken: string) {
   const server = new McpServer({
     name: 'sendkit-remote-mcp',
-    version: '0.0.0',
+    version,
   })
 
   registerTelegramTool(server, () => botToken)
