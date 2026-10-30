@@ -1,7 +1,7 @@
 import { Hono, type Context } from 'hono'
 
-import { createClerkClient } from "@clerk/backend"
-import { generateClerkProtectedResourceMetadata } from "@clerk/mcp-tools/server"
+import { createClerkClient } from '@clerk/backend'
+import { generateClerkProtectedResourceMetadata } from '@clerk/mcp-tools/server'
 
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server'
 import { registerTelegramTool } from 'sendkit-mcp-tools'
@@ -10,11 +10,11 @@ const clerkPublishableKey = process.env.CLERK_PUBLISHABLE_KEY
 const clerkSecretKey = process.env.CLERK_SECRET_KEY
 
 if (!clerkPublishableKey) {
-  throw new Error("CLERK_PUBLISHABLE_KEY environment variable is required")
+  throw new Error('CLERK_PUBLISHABLE_KEY environment variable is required')
 }
 
 if (!clerkSecretKey) {
-  throw new Error("CLERK_SECRET_KEY environment variable is required")
+  throw new Error('CLERK_SECRET_KEY environment variable is required')
 }
 
 const clerkClient = createClerkClient({
@@ -50,10 +50,10 @@ function protectedResourceMetadataUrl(c: Context, botToken: string) {
 
 function unauthorizedMcpResponse(c: Context, botToken: string) {
   c.header(
-    "WWW-Authenticate",
+    'WWW-Authenticate',
     `Bearer resource_metadata="${protectedResourceMetadataUrl(c, botToken)}", scope="${oauthScopes.join(' ')}"`,
   )
-  return c.json({ error: "Unauthorized" }, 401)
+  return c.json({ error: 'Unauthorized' }, 401)
 }
 
 // The MCP endpoint's public URL: the PRM `resource` and the `aud` Clerk stamps into tokens
@@ -61,7 +61,7 @@ function mcpResourceUrl(c: Context) {
   return new URL(`/${c.req.param('botToken')}/mcp`, c.req.url).toString()
 }
 
-app.get("/.well-known/oauth-protected-resource/:botToken/mcp", (c) => {
+app.get('/.well-known/oauth-protected-resource/:botToken/mcp', (c) => {
   return c.json(
     generateClerkProtectedResourceMetadata({
       publishableKey: clerkPublishableKey,
@@ -74,9 +74,9 @@ app.get("/.well-known/oauth-protected-resource/:botToken/mcp", (c) => {
 // All methods, so GET/DELETE get the 401 challenge and then the handler's 405 rather than a 404
 app.all('/:botToken/mcp', async (c) => {
   const botToken = c.req.param('botToken')
-  const authHeader = c.req.header("authorization")
+  const authHeader = c.req.header('authorization')
 
-  if (!authHeader?.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return unauthorizedMcpResponse(c, botToken)
   }
 
@@ -115,8 +115,8 @@ export default {
   port,
   fetch: (req: Request) => {
     const url = new URL(req.url)
-    url.protocol = req.headers.get("x-forwarded-proto") ?? url.protocol
-    url.host = req.headers.get("x-forwarded-host") ?? url.host
+    url.protocol = req.headers.get('x-forwarded-proto') ?? url.protocol
+    url.host = req.headers.get('x-forwarded-host') ?? url.host
 
     return app.fetch(new Request(url, req))
   },

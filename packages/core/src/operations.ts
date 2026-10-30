@@ -33,8 +33,9 @@ export async function sendTelegramMessage(
   } catch (error) {
     // Don't rethrow the original error: the request URL contains the bot token
     const reason = error instanceof Error ? error.message : String(error)
-    // eslint-disable-next-line preserve-caught-error -- the cause would carry the token
-    throw new Error(`Could not reach Telegram: ${reason.replaceAll(botToken, '<redacted>')}`)
+    throw new Error(`Could not reach Telegram: ${reason.replaceAll(botToken, '<redacted>')}`, {
+      cause: error,
+    })
   }
 
   // Telegram returns a JSON body even on 4xx errors, but a proxy or outage page may not
