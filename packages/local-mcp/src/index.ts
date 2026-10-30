@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/server'
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
 
-import { registerTelegramTool } from 'sendkit-mcp-tools'
+import { registerTelegramTool } from '@mirid-dev/sendkit-mcp-tools'
 
 const server = new McpServer({
   name: 'sendkit-local-mcp',

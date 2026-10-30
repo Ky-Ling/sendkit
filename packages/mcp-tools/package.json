@@ -1,14 +1,26 @@
 {
-  "name": "sendkit-mcp-tools",
+  "name": "@mirid-dev/sendkit-mcp-tools",
   "version": "0.0.0",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "pack:dry": "bun run build && bun pm pack --dry-run",
+    "prepublishOnly": "bun run build"
   },
   "dependencies": {
+    "@mirid-dev/sendkit-core": "workspace:*",
     "@modelcontextprotocol/server": "^2.4.0",
-    "sendkit-core": "workspace:*",
     "zod": "^4.6.7"
   }
 }

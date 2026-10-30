@@ -1,10 +1,18 @@
 {
-  "name": "sendkit-local-mcp",
+  "name": "@mirid-dev/sendkit-local-mcp",
   "version": "0.0.0",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "pack:dry": "bun run build && bun pm pack --dry-run",
+    "prepublishOnly": "bun run build"
+  },
   "dependencies": {
-    "@modelcontextprotocol/server": "^2.4.0",
-    "sendkit-mcp-tools": "workspace:*"
+    "@mirid-dev/sendkit-mcp-tools": "workspace:*",
+    "@modelcontextprotocol/server": "^2.4.0"
   }
 }

@@ -1,11 +1,19 @@
 {
-  "name": "sendkit",
+  "name": "@mirid-dev/sendkit",
   "version": "0.0.0",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "pack:dry": "bun run build && bun pm pack --dry-run",
+    "prepublishOnly": "bun run build"
+  },
   "dependencies": {
+    "@mirid-dev/sendkit-core": "workspace:*",
     "commander": "^15.0.0",
-    "sendkit-core": "workspace:*",
     "zod": "^4.6.7"
   }
 }

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { telegramMessageOptionsSchema } from 'sendkit-core'
+import { telegramMessageOptionsSchema } from '@mirid-dev/sendkit-core'
 
 export const configPath = join(homedir(), '.config', 'sendkit', 'config.json')
 export const botTokenSchema = telegramMessageOptionsSchema.shape.botToken
