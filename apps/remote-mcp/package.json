@@ -9,8 +9,5 @@
     "@modelcontextprotocol/server": "^2.4.0",
     "hono": "^4.13.14",
     "sendkit-mcp-tools": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^26.6.6"
   }
 }

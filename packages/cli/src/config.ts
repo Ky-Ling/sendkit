@@ -1,10 +1,10 @@
-import { z } from "zod"
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
-import { homedir } from "node:os"
-import { dirname, join } from "node:path"
-import { telegramMessageOptionsSchema } from "sendkit-core"
+import { z } from 'zod'
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { homedir } from 'node:os'
+import { dirname, join } from 'node:path'
+import { telegramMessageOptionsSchema } from 'sendkit-core'
 
-export const configPath = join(homedir(), ".config", "sendkit", "config.json")
+export const configPath = join(homedir(), '.config', 'sendkit', 'config.json')
 export const botTokenSchema = telegramMessageOptionsSchema.shape.botToken
 
 const cliConfigSchema = z.object({
@@ -22,22 +22,24 @@ export function writeTelegramBotToken(token: string) {
 
 function readCliConfig() {
   try {
-    return cliConfigSchema.parse(JSON.parse(readFileSync(configPath, "utf8")))
+    return cliConfigSchema.parse(JSON.parse(readFileSync(configPath, 'utf8')))
   } catch (error) {
     // Don't surface the raw JSON/Zod error, it doesn't say which file is broken
-    throw new Error(`Invalid config at ${configPath}. Run \`sendkit init\` again.`, { cause: error })
+    throw new Error(`Invalid config at ${configPath}. Run \`sendkit init\` again.`, {
+      cause: error,
+    })
   }
 }
 
 export function getTelegramBotToken() {
   if (!existsSync(configPath)) {
-    throw new Error("Telegram bot token is required. Run `sendkit init`.")
+    throw new Error('Telegram bot token is required. Run `sendkit init`.')
   }
 
   const token = readCliConfig().telegramBotToken
 
   if (!token) {
-    throw new Error("Telegram bot token is required. Run `sendkit init`.")
+    throw new Error('Telegram bot token is required. Run `sendkit init`.')
   }
 
   return token

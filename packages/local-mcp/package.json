@@ -6,8 +6,5 @@
   "dependencies": {
     "@modelcontextprotocol/server": "^2.4.0",
     "sendkit-mcp-tools": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^26.6.6"
   }
 }

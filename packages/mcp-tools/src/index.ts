@@ -1,7 +1,11 @@
 import type { McpServer } from '@modelcontextprotocol/server'
 import { z } from 'zod'
 
-import { sendTelegramMessage, telegramMessageInputSchema, telegramMessageOutputSchema } from 'sendkit-core'
+import {
+  sendTelegramMessage,
+  telegramMessageInputSchema,
+  telegramMessageOutputSchema,
+} from 'sendkit-core'
 
 // Structured content travels as JSON, so the Date becomes an ISO string
 const telegramToolOutputSchema = telegramMessageOutputSchema.extend({

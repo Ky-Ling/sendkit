@@ -1,20 +1,23 @@
-import { Command } from "commander"
-import { sendTelegramMessage, telegramMessageInputSchema } from "sendkit-core"
-import { botTokenSchema, configPath, getTelegramBotToken, writeTelegramBotToken } from "./config"
-import { readTelegramBotTokenInput } from "./input"
+import { Command } from 'commander'
+import { sendTelegramMessage, telegramMessageInputSchema } from 'sendkit-core'
+import { botTokenSchema, configPath, getTelegramBotToken, writeTelegramBotToken } from './config'
+import { readTelegramBotTokenInput } from './input'
 
 const program = new Command()
 
-program
-  .name("sendkit")
-  .description("SendKit CLI backed by sendkit-core")
+program.name('sendkit').description('SendKit CLI backed by sendkit-core')
 
 program
   .command('init')
-  .description("Configure SendKit CLI local settings")
-  .option("--telegram-bot-token <botToken>", "Telegram bot token (prompted for, or read from stdin, when omitted)")
+  .description('Configure SendKit CLI local settings')
+  .option(
+    '--telegram-bot-token <botToken>',
+    'Telegram bot token (prompted for, or read from stdin, when omitted)',
+  )
   .action(async (options: { telegramBotToken?: string }) => {
-    const token = botTokenSchema.safeParse(options.telegramBotToken ?? (await readTelegramBotTokenInput()))
+    const token = botTokenSchema.safeParse(
+      options.telegramBotToken ?? (await readTelegramBotTokenInput()),
+    )
 
     if (!token.success) {
       for (const issue of token.error.issues) {
@@ -30,10 +33,10 @@ program
 program
   // Required by passThroughOptions() on the subcommand below
   .enablePositionalOptions()
-  .command("telegram")
-  .description("Send a Telegram message")
-  .argument("<chatId>", "Telegram Chat ID")
-  .argument("<message>", "Message text to send")
+  .command('telegram')
+  .description('Send a Telegram message')
+  .argument('<chatId>', 'Telegram Chat ID')
+  .argument('<message>', 'Message text to send')
   // Stop parsing options after <chatId>, so a message like "-hello" or "--help" is sent as text
   .passThroughOptions()
   .action(async (chatId: string, message: string) => {
@@ -42,7 +45,7 @@ program
 
     if (!args.success) {
       for (const issue of args.error.issues) {
-        console.error(`Invalid ${issue.path.join(".")}: ${issue.message}`)
+        console.error(`Invalid ${issue.path.join('.')}: ${issue.message}`)
       }
       process.exit(1)
     }
@@ -54,11 +57,10 @@ program
 
     const result = await sendTelegramMessage({ ...args.data, botToken })
 
-    console.log("Message sent")
+    console.log('Message sent')
     console.log(`  Message ID: ${result.messageId}`)
     console.log(`  Chat ID:    ${result.chatId}`)
     console.log(`  Sent at:    ${result.sentAt.toLocaleString()}`)
-
   })
 
 await program.parseAsync(process.argv).catch((error: unknown) => {
