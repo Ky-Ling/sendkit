@@ -1,17 +1,22 @@
 {
   "name": "@mirid-dev/sendkit-mcp-tools",
   "version": "0.0.0",
-  "private": true,
   "files": [
     "dist"
   ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",

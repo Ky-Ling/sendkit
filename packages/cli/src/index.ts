@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander'
 import { sendTelegramMessage, telegramMessageInputSchema } from '@mirid-dev/sendkit-core'
 import { botTokenSchema, configPath, getTelegramBotToken, writeTelegramBotToken } from './config'

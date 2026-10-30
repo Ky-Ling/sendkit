@@ -1,11 +1,16 @@
 {
   "name": "@mirid-dev/sendkit-local-mcp",
   "version": "0.0.0",
-  "private": true,
+  "bin": {
+    "sendkit-local-mcp": "./dist/index.js"
+  },
   "files": [
     "dist"
   ],
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "pack:dry": "bun run build && bun pm pack --dry-run",
