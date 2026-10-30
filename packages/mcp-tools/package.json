@@ -1,8 +1,16 @@
 {
   "name": "@mirid-dev/sendkit-mcp-tools",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "description": "MCP tool definitions for SendKit, shared by its local and remote MCP servers",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ky-Ling/sendkit.git",
+    "directory": "packages/mcp-tools"
+  },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -27,5 +35,8 @@
     "@mirid-dev/sendkit-core": "workspace:*",
     "@modelcontextprotocol/server": "^2.4.0",
     "zod": "^4.6.7"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

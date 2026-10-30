@@ -8,7 +8,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   platform: 'node',
-  target: 'node20',
+  target: 'node22.12',
   outDir: 'dist',
   outExtensions: () => ({ js: '.js', dts: '.d.ts' }),
   deps: {
