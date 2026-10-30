@@ -18,41 +18,41 @@
       "dependencies": {
         "@clerk/backend": "^3.26.4",
         "@clerk/mcp-tools": "^0.7.0",
+        "@mirid-dev/sendkit-mcp-tools": "workspace:*",
         "@modelcontextprotocol/server": "^2.4.0",
         "hono": "^4.13.14",
-        "sendkit-mcp-tools": "workspace:*",
       },
     },
     "packages/cli": {
-      "name": "sendkit",
+      "name": "@mirid-dev/sendkit",
       "version": "0.0.0",
       "dependencies": {
+        "@mirid-dev/sendkit-core": "workspace:*",
         "commander": "^15.0.0",
-        "sendkit-core": "workspace:*",
         "zod": "^4.6.7",
       },
     },
     "packages/core": {
-      "name": "sendkit-core",
+      "name": "@mirid-dev/sendkit-core",
       "version": "0.0.0",
       "dependencies": {
         "zod": "^4.6.7",
       },
     },
     "packages/local-mcp": {
-      "name": "sendkit-local-mcp",
+      "name": "@mirid-dev/sendkit-local-mcp",
       "version": "0.0.0",
       "dependencies": {
+        "@mirid-dev/sendkit-mcp-tools": "workspace:*",
         "@modelcontextprotocol/server": "^2.4.0",
-        "sendkit-mcp-tools": "workspace:*",
       },
     },
     "packages/mcp-tools": {
-      "name": "sendkit-mcp-tools",
+      "name": "@mirid-dev/sendkit-mcp-tools",
       "version": "0.0.0",
       "dependencies": {
+        "@mirid-dev/sendkit-core": "workspace:*",
         "@modelcontextprotocol/server": "^2.4.0",
-        "sendkit-core": "workspace:*",
         "zod": "^4.6.7",
       },
     },
@@ -65,6 +65,14 @@
     "@clerk/shared": ["@clerk/shared@4.43.0", "", { "dependencies": { "@tanstack/query-core": "^5.101.4", "dequal": "2.0.3", "glob-to-regexp": "0.4.1", "js-cookie": "3.0.8" }, "peerDependencies": { "react": "^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0", "react-dom": "^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0" }, "optionalPeers": ["react", "react-dom"] }, "sha512-EtFANpM+o5pt4zeTh1ww+oYk8qg53Plofl5jA67gi1HYVxsiVvkKmfPU0BFAf54vOcTyzvpZxRvffEGTI0hsiw=="],
 
     "@hono/node-server": ["@hono/node-server@2.1.5", "", { "peerDependencies": { "hono": "^4 || ^5.0.0-0" } }, "sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q=="],
+
+    "@mirid-dev/sendkit": ["@mirid-dev/sendkit@workspace:packages/cli"],
+
+    "@mirid-dev/sendkit-core": ["@mirid-dev/sendkit-core@workspace:packages/core"],
+
+    "@mirid-dev/sendkit-local-mcp": ["@mirid-dev/sendkit-local-mcp@workspace:packages/local-mcp"],
+
+    "@mirid-dev/sendkit-mcp-tools": ["@mirid-dev/sendkit-mcp-tools@workspace:packages/mcp-tools"],
 
     "@modelcontextprotocol/core": ["@modelcontextprotocol/core@2.4.0", "", { "dependencies": { "zod": "^4.2.0" } }, "sha512-z8QBKqdfXLPzkLQuG4xp8hrVEMm1PZ1IgxMN2sMbJiFiAKOWXnAzogXn2W4aqIBlP1ea6U5yiqVquvUNM1Cj6Q=="],
 
@@ -441,14 +449,6 @@
     "safer-buffer": ["safer-buffer@2.1.2", "", {}, "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="],
 
     "send": ["send@1.2.1", "", { "dependencies": { "debug": "^4.4.3", "encodeurl": "^2.0.0", "escape-html": "^1.0.3", "etag": "^1.8.1", "fresh": "^2.0.0", "http-errors": "^2.0.1", "mime-types": "^3.0.2", "ms": "^2.1.3", "on-finished": "^2.4.1", "range-parser": "^1.2.1", "statuses": "^2.0.2" } }, "sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ=="],
-
-    "sendkit": ["sendkit@workspace:packages/cli"],
-
-    "sendkit-core": ["sendkit-core@workspace:packages/core"],
-
-    "sendkit-local-mcp": ["sendkit-local-mcp@workspace:packages/local-mcp"],
-
-    "sendkit-mcp-tools": ["sendkit-mcp-tools@workspace:packages/mcp-tools"],
 
     "sendkit-remote-mcp": ["sendkit-remote-mcp@workspace:apps/remote-mcp"],
 

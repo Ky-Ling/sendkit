@@ -4,7 +4,7 @@ import { createClerkClient } from '@clerk/backend'
 import { generateClerkProtectedResourceMetadata } from '@clerk/mcp-tools/server'
 
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server'
-import { registerTelegramTool } from 'sendkit-mcp-tools'
+import { registerTelegramTool } from '@mirid-dev/sendkit-mcp-tools'
 
 const clerkPublishableKey = process.env.CLERK_PUBLISHABLE_KEY
 const clerkSecretKey = process.env.CLERK_SECRET_KEY

@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import { sendTelegramMessage, telegramMessageInputSchema } from 'sendkit-core'
+import { sendTelegramMessage, telegramMessageInputSchema } from '@mirid-dev/sendkit-core'
 import { botTokenSchema, configPath, getTelegramBotToken, writeTelegramBotToken } from './config'
 import { readTelegramBotTokenInput } from './input'
 

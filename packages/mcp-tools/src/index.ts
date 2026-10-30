@@ -5,7 +5,7 @@ import {
   sendTelegramMessage,
   telegramMessageInputSchema,
   telegramMessageOutputSchema,
-} from 'sendkit-core'
+} from '@mirid-dev/sendkit-core'
 
 // Structured content travels as JSON, so the Date becomes an ISO string
 const telegramToolOutputSchema = telegramMessageOutputSchema.extend({
