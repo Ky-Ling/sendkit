@@ -1,6 +1,6 @@
 # Publish an npm package with tsdown
 
-This note follows the four publishable packages in this repo. These are `packages/core`, `packages/mcp-tools`, `packages/cli`, and `packages/local-mcp`. `apps/remote-mcp` is `"private": true`, and npm "will refuse to publish it" (<https://docs.npmjs.com/cli/v11/configuring-npm/package-json>).
+This note follows the three publishable packages in this repo. These are `packages/core`, `packages/cli`, and `packages/local-mcp`. `packages/mcp-tools` and `apps/remote-mcp` are `"private": true`, and npm "will refuse to publish" a private package (<https://docs.npmjs.com/cli/v11/configuring-npm/package-json>). `mcp-tools` reaches npm users only inside the `local-mcp` bundle (section 1).
 
 - **tsdown**: a library bundler built on Rolldown that turns TypeScript entry files into JavaScript and, optionally, `.d.ts` files.
 - **Tarball**: the `.tgz` archive that `pack` creates and `publish` uploads. It is the only thing the registry stores.
@@ -9,28 +9,31 @@ No command in this note was run against the registry. The build and the `pack` c
 
 ## 1. What tsdown emits
 
-Each package has its own `tsdown.config.ts`, and every `build` script is just `tsdown`. The four configs are identical apart from `dts`, `target`, and the dependency list:
+Each published package has its own `tsdown.config.ts`, and every `build` script is just `tsdown`. The settings the packages share live once in the root `tsdown.base.ts`, whose `definePackageBuild({ dts, target, neverBundle })` takes only the three settings that differ. Each package config imports it as `'../../tsdown.base.ts'`: tsdown loads configs with Node's native TypeScript support, which needs the explicit `.ts` extension, so the root `tsconfig.json` sets `rewriteRelativeImportExtensions`. That option permits `.ts` import paths and stays valid in configs that emit. `allowImportingTsExtensions` would also permit them, but TypeScript rejects it (TS5096) in any config without `noEmit`, which includes every package's `tsconfig.json` and `tsconfig.build.json`.
 
-| Option               | core / mcp-tools                      | cli                      | local-mcp          | Meaning                                                                                                                                             |
-| -------------------- | ------------------------------------- | ------------------------ | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entry`              | `['src/index.ts']`                    | same                     | same               | Starting file of the bundle. "These files serve as the starting points for the bundling process." (<https://tsdown.dev/options/entry>)              |
-| `outDir`             | `'dist'`                              | same                     | same               | Output folder. Also the default: "By default, `tsdown` bundles your code into the `dist` directory" (<https://tsdown.dev/options/output-directory>) |
-| `format`             | `['esm']`                             | same                     | same               | ES modules only, which matches `"type": "module"`                                                                                                   |
-| `dts`                | `true`                                | `false`                  | `false`            | Emit `dist/index.d.ts`. Only libraries need types (<https://tsdown.dev/options/dts>)                                                                |
-| `target`             | `node20`                              | `node22.12`              | `node20`           | Matches each package's `engines.node`                                                                                                               |
-| `tsconfig`           | `tsconfig.build.json`                 | same                     | same               | Build-only tsconfig with `declaration`, `outDir: dist`, `rootDir: src`                                                                              |
-| `sourcemap`, `clean` | `true`                                | same                     | same               | Emit `.js.map` files, and empty `dist/` before each build                                                                                           |
-| `outExtensions`      | `.js` / `.d.ts`                       | same                     | same               | Fixes the file extensions that `package.json` points to                                                                                             |
-| `deps.neverBundle`   | `zod` (+ core, MCP SDK for mcp-tools) | core, `commander`, `zod` | mcp-tools, MCP SDK | Keep these as `import` statements in the output                                                                                                     |
+| Option               | core                  | cli                      | local-mcp            | Meaning                                                                                                                                             |
+| -------------------- | --------------------- | ------------------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entry`              | `['src/index.ts']`    | same                     | same                 | Starting file of the bundle. "These files serve as the starting points for the bundling process." (<https://tsdown.dev/options/entry>)              |
+| `outDir`             | `'dist'`              | same                     | same                 | Output folder. Also the default: "By default, `tsdown` bundles your code into the `dist` directory" (<https://tsdown.dev/options/output-directory>) |
+| `format`             | `['esm']`             | same                     | same                 | ES modules only, which matches `"type": "module"`                                                                                                   |
+| `dts`                | `true`                | `false`                  | `false`              | Emit `dist/index.d.ts`. Only libraries need types (<https://tsdown.dev/options/dts>)                                                                |
+| `target`             | `node20`              | `node22.12`              | `node20`             | Matches each package's `engines.node`                                                                                                               |
+| `tsconfig`           | `tsconfig.build.json` | same                     | same                 | Build-only tsconfig with `declaration`, `outDir: dist`, `rootDir: src`                                                                              |
+| `sourcemap`, `clean` | `true`                | same                     | same                 | Emit `.js.map` files, and empty `dist/` before each build                                                                                           |
+| `outExtensions`      | `.js` / `.d.ts`       | same                     | same                 | Fixes the file extensions that `package.json` points to                                                                                             |
+| `deps.neverBundle`   | `zod`                 | core, `commander`, `zod` | core, MCP SDK, `zod` | Keep these as `import` statements in the output                                                                                                     |
 
 On `deps.neverBundle`: tsdown already "does not bundle dependencies" listed in `dependencies` or `peerDependencies`. `deps.neverBundle` is the current name of the old `external` option (<https://tsdown.dev/options/dependencies>). The repo lists the same names explicitly, so the externals do not depend on that default.
+
+**Bundling the private mcp-tools.** `local-mcp` lists `@mirid-dev/sendkit-mcp-tools` under `devDependencies` and leaves it out of `neverBundle`, so tsdown inlines it into `dist/index.js`. mcp-tools' own runtime imports (core, the MCP SDK, `zod`) move into `local-mcp`'s `dependencies`, because the bundle now imports them directly. mcp-tools exports `./src/index.ts` and has no build of its own, since its only consumers bundle it (`local-mcp`) or run it from source (`apps/remote-mcp`).
 
 Running `bun run build` from the root produced the following output (tsdown 0.23.4):
 
 - `packages/core/dist/`: `index.js`, `index.js.map`, `index.d.ts`, `index.d.ts.map`.
 - `packages/cli/dist/`: `index.js` (4.21 kB) and `index.js.map`, with no `.d.ts`.
 - tsdown keeps the `#!/usr/bin/env node` line from `src/index.ts` and logs `Granting execute permission to dist/index.js` for `cli` and `local-mcp`.
-- `import { version } from '../package.json'` is inlined. `packages/cli/dist/index.js` contains `var version = "0.0.1";`. A version bump therefore requires a rebuild, or `--version` reports the old number.
+- `packages/local-mcp/dist/index.js` (1.51 kB) contains `registerTelegramTool` inline and imports only `@modelcontextprotocol/server`, `zod`, and `@mirid-dev/sendkit-core`. Installing the packed tarball with npm outside the repo pulls the published `@mirid-dev/sendkit-core` from the registry, and the server answers `initialize`, `tools/list`, and `tools/call` over stdio.
+- `import { version } from '../package.json'` is inlined. `packages/cli/dist/index.js` contains `var version = "0.0.2";`. A version bump therefore requires a rebuild, or `--version` reports the old number.
 - `dts` generation runs on `typescript@7.0.2` and prints a warning that TypeScript 7's API is experimental. The build still succeeds.
 
 ![tsdown inputs, outputs, and the package.json fields that point at them](diagrams/08-tsdown-build.png)
@@ -40,7 +43,7 @@ _Caption: `package.json` points only into `dist/`, so publishing without buildin
 
 The **entry points** are the `package.json` fields that tell Node, bundlers, and npm which file to load or link. tsdown can generate them (`exports: true`, <https://tsdown.dev/options/package-exports>). This repo does not use that option and writes them by hand.
 
-**Libraries (`packages/core`, `packages/mcp-tools`):**
+**Library (`packages/core`):**
 
 ```json
 "main": "./dist/index.js",
@@ -71,41 +74,39 @@ The **entry points** are the `package.json` fields that tell Node, bundlers, and
 - These packages have no `exports`, because nothing imports them.
 - npm always includes `package.json`, `README`, `LICENSE`, and the `bin` file, whatever `files` says (same source). The cli tarball holds 5 files: `package.json`, `LICENSE`, `README.md`, `dist/index.js`, and `dist/index.js.map`.
 
-**Shared fields in all four packages:**
+**Shared fields in all three published packages:**
 
 - `"publishConfig": { "access": "public" }`. `publishConfig` is "a set of config values that will be used at publish-time" (same source). For a scoped package it removes the need to pass `--access public`.
 - `"prepublishOnly": "bun run build"`. npm defines this hook as: "Runs BEFORE the package is prepared and packed, ONLY on `npm publish`." It does not run on `npm pack` (<https://docs.npmjs.com/cli/v11/using-npm/scripts>). Bun runs `prepublishOnly` only "when `bun publish` packs the package itself". A pre-built tarball such as `bun publish ./pkg.tgz` runs no lifecycle scripts (<https://bun.com/docs/cli/publish>). This is why each `pack:dry` script is `bun run build && bun pm pack --dry-run`. The script builds explicitly because `pack` does not trigger `prepublishOnly`.
 
 ## 3. Publish order in this repo
 
-The repo has no publish script. The root `package.json` provides `build`, `build:<pkg>`, and four `release:pack:<pkg>` scripts, and each of those runs the package's `pack:dry`. Publishing is a manual step run from the package directory.
+The repo has no publish script. The root `package.json` provides `build`, `build:<pkg>`, and three `release:pack:<pkg>` scripts, and each of those runs the package's `pack:dry`. Publishing is a manual step run from the package directory.
 
 **Dependency graph after packing:**
 
 - `core` depends on `zod` only.
-- `mcp-tools` depends on `core`.
 - `cli` depends on `core`.
-- `local-mcp` depends on `mcp-tools`.
+- `local-mcp` depends on `core`. Its bundled copy of `mcp-tools` imports core at runtime.
 
 The order follows that graph:
 
 1. **Build.** `bun run build` (root) runs `tsdown` in every `packages/*`.
 2. **Dry-run.** `bun run release:pack:core` (and the others) prints the exact file list without writing a tarball. Check that `dist/` is present and that nothing unexpected is included.
 3. **Publish core.** In `packages/core`: `bun publish --dry-run`, then `bun publish`.
-4. **Publish the direct dependents of core.** Publish `packages/cli` and `packages/mcp-tools` in either order.
-5. **Publish local-mcp.** It needs `mcp-tools` at the exact version its manifest pins.
-6. **Verify.** Run `npm view <name> version dependencies` for each package, then `npx -y @mirid-dev/sendkit-local-mcp@latest` or `npx @mirid-dev/sendkit --version` from outside the repo.
+4. **Publish the dependents of core.** Publish `packages/cli` and `packages/local-mcp` in either order. Each pins the exact core version its manifest resolves to.
+5. **Verify.** Run `npm view <name> version dependencies` for each package, then `npx -y @mirid-dev/sendkit-local-mcp@latest` or `npx @mirid-dev/sendkit --version` from outside the repo.
 
 ![Publish order constrained by the dependency graph](diagrams/09-publish-order.png)
-_Caption: cli and mcp-tools can go in either order, but both must wait for core, and local-mcp must wait for mcp-tools._
+_Caption: cli and local-mcp can go in either order, but both must wait for core. mcp-tools is never published._
 
-**Workspace protocol.** The **workspace protocol** is a dependency specifier such as `workspace:*` that means "the copy in this monorepo". `packages/cli/package.json:27` declares `"@mirid-dev/sendkit-core": "workspace:*"`, and mcp-tools and local-mcp use the same form. The registry cannot resolve that specifier. The pack step must rewrite it to a published version.
+**Workspace protocol.** The **workspace protocol** is a dependency specifier such as `workspace:*` that means "the copy in this monorepo". `packages/cli/package.json:27` declares `"@mirid-dev/sendkit-core": "workspace:*"`, and local-mcp uses the same form. The registry cannot resolve that specifier. The pack step must rewrite it to a published version.
 
 Bun does this rewrite. `bun publish` "strips catalog and workspace protocols from the package.json, resolving versions if necessary" (<https://bun.com/docs/cli/publish>). npm does not. Both behaviours were checked locally on `packages/cli`:
 
 | Command                   | `@mirid-dev/sendkit-core` in the tarball's `package.json` |
 | ------------------------- | --------------------------------------------------------- |
-| `bun pm pack` (bun 1.4.4) | `"0.0.1"`                                                 |
+| `bun pm pack` (bun 1.4.4) | `"0.0.2"`                                                 |
 | `npm pack` (npm 11.6.2)   | `"workspace:*"`, unchanged                                |
 
 Installing the npm-built tarball fails with `npm error code EUNSUPPORTEDPROTOCOL` / `Unsupported URL Type "workspace:": workspace:*`. In this repo, publish with `bun publish`, never `npm publish`.
@@ -113,9 +114,9 @@ Installing the npm-built tarball fails with `npm error code EUNSUPPORTEDPROTOCOL
 ![Bun rewrites the workspace protocol, and npm copies it unchanged](diagrams/10-workspace-to-registry.png)
 _Caption: the rewrite happens at pack time, so the tool that builds the tarball decides whether the package can be installed._
 
-**Exact pins.** pnpm documents the same rewrite rule that Bun applies here: `workspace:*` becomes the exact version (`1.5.0`), and `workspace:^` becomes `^1.5.0` (<https://pnpm.io/workspaces>). The published manifests confirm exact pins. `npm view @mirid-dev/sendkit dependencies` shows `"@mirid-dev/sendkit-core": "0.0.1"`, and `npm view @mirid-dev/sendkit-local-mcp dependencies` shows `"@mirid-dev/sendkit-mcp-tools": "0.0.1"`. The consequence: a core fix reaches CLI users only after a new CLI version is published that pins the new core. Switching to `workspace:^` would let a patched core reach existing CLI installs without a CLI release.
+**Exact pins.** pnpm documents the same rewrite rule that Bun applies here: `workspace:*` becomes the exact version (`1.5.0`), and `workspace:^` becomes `^1.5.0` (<https://pnpm.io/workspaces>). The published manifests confirm exact pins. `npm view @mirid-dev/sendkit@0.0.1 dependencies` shows `"@mirid-dev/sendkit-core": "0.0.1"`, and `local-mcp@0.0.1` pins `"@mirid-dev/sendkit-mcp-tools": "0.0.1"`. From `0.0.2`, `local-mcp` pins `"@mirid-dev/sendkit-core"` instead, plus a `devDependencies` entry for the private `mcp-tools` at `"0.0.0"`, which npm never installs for consumers. The consequence: a core fix reaches CLI users only after a new CLI version is published that pins the new core. Switching to `workspace:^` would let a patched core reach existing CLI installs without a CLI release.
 
-**Versions.** All four packages are at `0.0.1` in source and on the registry. Once a name and version are published, "that specific name and version combination can never be used again" (<https://docs.npmjs.com/cli/v11/commands/npm-publish>). Every later release therefore starts by changing the `version` field of each package being released. This note does not pick a version number.
+**Versions.** core, cli, and local-mcp are released together under one version number, so cli and local-mcp always pin the core published alongside them. `0.0.2` was the first such release, after core's exports narrowed and mcp-tools was bundled into local-mcp. `@mirid-dev/sendkit-mcp-tools` stays on the registry at `0.0.1` and earlier, deprecated, and its source version is now `0.0.0`. Once a name and version are published, "that specific name and version combination can never be used again" (<https://docs.npmjs.com/cli/v11/commands/npm-publish>). Every later release therefore starts by changing the `version` field of each package being released. Bump all three together.
 
 ## 4. General publish rule
 

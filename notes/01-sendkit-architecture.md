@@ -12,16 +12,16 @@ The root `package.json` is private, is named `sendkit-workspace`, and declares `
 
 ## 2. Packages and apps
 
-The tree contains four publishable packages, one private app, and one skill folder. Nothing else is present. In particular, no `packages/remote-mcp` exists, and the remote server lives under `apps/`.
+The tree contains three publishable packages, one private package, one private app, and one skill folder. Nothing else is present. In particular, no `packages/remote-mcp` exists, and the remote server lives under `apps/`.
 
-| Path                 | npm name                       | Role                                                                    | Published                     |
-| -------------------- | ------------------------------ | ----------------------------------------------------------------------- | ----------------------------- |
-| `packages/core`      | `@mirid-dev/sendkit-core`      | zod schemas and `sendTelegramMessage`                                   | yes, library                  |
-| `packages/mcp-tools` | `@mirid-dev/sendkit-mcp-tools` | `registerTelegramTool(server, getBotToken)`, shared by both MCP servers | yes, library                  |
-| `packages/cli`       | `@mirid-dev/sendkit`           | `sendkit init` and `sendkit telegram <chatId> <message>`                | yes, `bin: sendkit`           |
-| `packages/local-mcp` | `@mirid-dev/sendkit-local-mcp` | stdio MCP server                                                        | yes, `bin: sendkit-local-mcp` |
-| `apps/remote-mcp`    | `sendkit-remote-mcp`           | Streamable HTTP MCP server with Clerk OAuth                             | no, `"private": true`         |
-| `skills/sendkit`     | none                           | `SKILL.md`, which is agent instructions                                 | no, not a package             |
+| Path                 | npm name                       | Role                                                                    | Published                                     |
+| -------------------- | ------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------- |
+| `packages/core`      | `@mirid-dev/sendkit-core`      | zod schemas and `sendTelegramMessage`                                   | yes, library                                  |
+| `packages/mcp-tools` | `@mirid-dev/sendkit-mcp-tools` | `registerTelegramTool(server, getBotToken)`, shared by both MCP servers | no, `"private": true`; bundled into local-mcp |
+| `packages/cli`       | `@mirid-dev/sendkit`           | `sendkit init` and `sendkit telegram <chatId> <message>`                | yes, `bin: sendkit`                           |
+| `packages/local-mcp` | `@mirid-dev/sendkit-local-mcp` | stdio MCP server                                                        | yes, `bin: sendkit-local-mcp`                 |
+| `apps/remote-mcp`    | `sendkit-remote-mcp`           | Streamable HTTP MCP server with Clerk OAuth                             | no, `"private": true`                         |
+| `skills/sendkit`     | none                           | `SKILL.md`, which is agent instructions                                 | no, not a package                             |
 
 ![Workspace folders and the packages inside them](diagrams/04-package-map.png)
 _Caption: `skills/` hangs off the root as a plain folder, outside the `apps/*` and `packages/*` workspace globs._
@@ -38,7 +38,7 @@ core owns the schemas and the operation. Every other package imports from core, 
 - `packages/core/src/operations.ts:12-65` exports `sendTelegramMessage`. It parses the options, POSTs to `https://api.telegram.org/bot<token>/sendMessage` with a 10-second `AbortSignal.timeout`, removes the token from network errors (`:36`), validates the response with `safeParse`, and returns the parsed output.
 - `packages/mcp-tools/src/index.ts:16-44` registers a tool named `telegram`. It uses `telegramMessageInputSchema` as the input schema and core's output schema with `sentAt` changed to an ISO string, because structured content travels as JSON (`:10-13`).
 - `packages/cli/src/index.ts:46-60` validates argv with `telegramMessageInputSchema`, loads the token from `~/.config/sendkit/config.json` (`packages/cli/src/config.ts:7`), and calls `sendTelegramMessage`.
-- `packages/local-mcp` and `apps/remote-mcp` depend on `@mirid-dev/sendkit-mcp-tools`, not on core directly. Their `package.json` files do not list core. They reach it transitively.
+- `apps/remote-mcp` depends on `@mirid-dev/sendkit-mcp-tools` and reaches core transitively. `packages/local-mcp` lists mcp-tools as a dev dependency and core as a runtime dependency, because tsdown bundles mcp-tools into its `dist/index.js` and the bundle imports core directly. mcp-tools exports its TypeScript source and has no build of its own.
 
 The adapters differ in one respect only: where the bot token comes from. The CLI reads a file, local-mcp reads an environment variable, and remote-mcp reads a URL path segment. Each passes the token into core, and core validates it with `telegramMessageOptionsSchema.shape.botToken` (`schemas.ts:27-32`). No adapter calls Telegram itself, and no package imports an adapter.
 
