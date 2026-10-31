@@ -10,20 +10,20 @@ SendKit has one operation, `sendTelegramMessage`, and exposes it three ways:
 
 ## Packages
 
-| Path                 | Package                                                                                      | What it is                                                    |
-| -------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `packages/core`      | [`@mirid-dev/sendkit-core`](https://www.npmjs.com/package/@mirid-dev/sendkit-core)           | zod schemas and `sendTelegramMessage`                         |
-| `packages/mcp-tools` | [`@mirid-dev/sendkit-mcp-tools`](https://www.npmjs.com/package/@mirid-dev/sendkit-mcp-tools) | `registerTelegramTool`, shared by both MCP servers            |
-| `packages/cli`       | [`@mirid-dev/sendkit`](https://www.npmjs.com/package/@mirid-dev/sendkit)                     | The `sendkit` command                                         |
-| `packages/local-mcp` | [`@mirid-dev/sendkit-local-mcp`](https://www.npmjs.com/package/@mirid-dev/sendkit-local-mcp) | stdio MCP server                                              |
-| `apps/remote-mcp`    | `sendkit-remote-mcp` (private)                                                               | HTTP MCP server with Clerk OAuth, run from source with Bun    |
-| `skills/sendkit`     | none                                                                                         | Agent skill that explains when to use the MCP tool or the CLI |
+| Path                 | Package                                                                                      | What it is                                                                      |
+| -------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `packages/core`      | [`@mirid-dev/sendkit-core`](https://www.npmjs.com/package/@mirid-dev/sendkit-core)           | zod schemas and `sendTelegramMessage`                                           |
+| `packages/mcp-tools` | `@mirid-dev/sendkit-mcp-tools` (private)                                                     | `registerTelegramTool`, shared by both MCP servers and bundled into `local-mcp` |
+| `packages/cli`       | [`@mirid-dev/sendkit`](https://www.npmjs.com/package/@mirid-dev/sendkit)                     | The `sendkit` command                                                           |
+| `packages/local-mcp` | [`@mirid-dev/sendkit-local-mcp`](https://www.npmjs.com/package/@mirid-dev/sendkit-local-mcp) | stdio MCP server                                                                |
+| `apps/remote-mcp`    | `sendkit-remote-mcp` (private)                                                               | HTTP MCP server with Clerk OAuth, run from source with Bun                      |
+| `skills/sendkit`     | none                                                                                         | Agent skill that explains when to use the MCP tool or the CLI                   |
 
 Each published package has its own README with full usage details.
 
 ## Quick start
 
-You need a bot token from [@BotFather](https://t.me/BotFather) and the chat ID to send to. A chat ID is a number (negative for groups) or a public `@channelusername`. Messages can be up to 4096 characters.
+You need a bot token from [@BotFather](https://t.me/BotFather) and the chat ID to send to. The accepted chat ID formats, message limits, and error messages are documented once in [`packages/core`](packages/core/README.md).
 
 ### CLI
 
@@ -87,19 +87,19 @@ cp .mcp.json.example .mcp.json     # runs the local MCP server from source
 
 During development the packages import each other's TypeScript source through a `source` export condition, so you don't need to build first.
 
-| Script                                                   | What it does                                   |
-| -------------------------------------------------------- | ---------------------------------------------- |
-| `bun run dev:cli -- <args>`                              | Run the CLI from source                        |
-| `bun run dev:local-mcp`                                  | Run the local MCP server from source           |
-| `bun run dev:remote-mcp`                                 | Run the remote MCP server from source          |
-| `bun run build`                                          | Build every package in `packages/` with tsdown |
-| `bun run release:pack:<core\|mcp-tools\|cli\|local-mcp>` | Build a package and dry-run `bun pm pack`      |
-| `bun run test`                                           | Run the tests with `bun test`                  |
-| `bun run typecheck`                                      | Type-check with `tsc`                          |
-| `bun run lint` / `lint:fix`                              | Lint with oxlint                               |
-| `bun run format` / `format:check`                        | Format with oxfmt                              |
+| Script                                        | What it does                                                                |
+| --------------------------------------------- | --------------------------------------------------------------------------- |
+| `bun run dev:cli -- <args>`                   | Run the CLI from source                                                     |
+| `bun run dev:local-mcp`                       | Run the local MCP server from source                                        |
+| `bun run dev:remote-mcp`                      | Run the remote MCP server from source                                       |
+| `bun run build`                               | Build the published packages with tsdown, using the shared `tsdown.base.ts` |
+| `bun run release:pack:<core\|cli\|local-mcp>` | Build a package and dry-run `bun pm pack`                                   |
+| `bun run test`                                | Run the tests with `bun test`                                               |
+| `bun run typecheck`                           | Type-check with `tsc`                                                       |
+| `bun run lint` / `lint:fix`                   | Lint with oxlint                                                            |
+| `bun run format` / `format:check`             | Format with oxfmt                                                           |
 
-Publish in dependency order: `core` first, then `cli` and `mcp-tools` in either order, then `local-mcp` once `mcp-tools` is out.
+Publish in dependency order: `core` first, then `cli` and `local-mcp` in either order. `mcp-tools` is never published: tsdown bundles it into `local-mcp`, and `remote-mcp` runs it from source.
 
 ## Notes
 

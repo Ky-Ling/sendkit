@@ -26,7 +26,7 @@
     },
     "packages/cli": {
       "name": "@mirid-dev/sendkit",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "bin": {
         "sendkit": "./dist/index.js",
       },
@@ -38,25 +38,29 @@
     },
     "packages/core": {
       "name": "@mirid-dev/sendkit-core",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dependencies": {
         "zod": "^4.6.7",
       },
     },
     "packages/local-mcp": {
       "name": "@mirid-dev/sendkit-local-mcp",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "bin": {
         "sendkit-local-mcp": "./dist/index.js",
       },
       "dependencies": {
-        "@mirid-dev/sendkit-mcp-tools": "workspace:*",
+        "@mirid-dev/sendkit-core": "workspace:*",
         "@modelcontextprotocol/server": "^2.4.0",
+        "zod": "^4.6.7",
+      },
+      "devDependencies": {
+        "@mirid-dev/sendkit-mcp-tools": "workspace:*",
       },
     },
     "packages/mcp-tools": {
       "name": "@mirid-dev/sendkit-mcp-tools",
-      "version": "0.0.1",
+      "version": "0.0.0",
       "dependencies": {
         "@mirid-dev/sendkit-core": "workspace:*",
         "@modelcontextprotocol/server": "^2.4.0",

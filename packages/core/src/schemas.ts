@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+// The input rules and error messages in this package are documented in packages/core/README.md and
+// skills/sendkit/SKILL.md, and summarised in the cli and local-mcp READMEs; update those when they change
+
 // Telegram rejects message text longer than this
 const TELEGRAM_MAX_MESSAGE_LENGTH = 4096
 

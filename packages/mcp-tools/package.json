@@ -1,42 +1,15 @@
 {
   "name": "@mirid-dev/sendkit-mcp-tools",
-  "version": "0.0.1",
-  "description": "MCP tool definitions for SendKit, shared by its local and remote MCP servers",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Ky-Ling/sendkit.git",
-    "directory": "packages/mcp-tools"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
+  "version": "0.0.0",
+  "private": true,
+  "description": "MCP tool definitions shared by the SendKit local and remote MCP servers",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "build": "tsdown",
-    "pack:dry": "bun run build && bun pm pack --dry-run",
-    "prepublishOnly": "bun run build"
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@mirid-dev/sendkit-core": "workspace:*",
     "@modelcontextprotocol/server": "^2.4.0",
     "zod": "^4.6.7"
-  },
-  "engines": {
-    "node": ">=20"
   }
 }

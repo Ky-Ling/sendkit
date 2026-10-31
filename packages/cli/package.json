@@ -1,6 +1,6 @@
 {
   "name": "@mirid-dev/sendkit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "SendKit command-line tool for sending Telegram messages",
   "license": "MIT",
   "repository": {
