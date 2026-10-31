@@ -6,7 +6,7 @@
     "customConditions": ["source"],
     "resolveJsonModule": true,
     "strict": true,
-    "types": ["node"],
+    "types": ["node", "bun"],
     "skipLibCheck": true
   }
 }

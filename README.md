@@ -94,6 +94,7 @@ During development the packages import each other's TypeScript source through a 
 | `bun run dev:remote-mcp`                                 | Run the remote MCP server from source          |
 | `bun run build`                                          | Build every package in `packages/` with tsdown |
 | `bun run release:pack:<core\|mcp-tools\|cli\|local-mcp>` | Build a package and dry-run `bun pm pack`      |
+| `bun run test`                                           | Run the tests with `bun test`                  |
 | `bun run typecheck`                                      | Type-check with `tsc`                          |
 | `bun run lint` / `lint:fix`                              | Lint with oxlint                               |
 | `bun run format` / `format:check`                        | Format with oxfmt                              |
