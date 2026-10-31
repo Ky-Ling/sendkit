@@ -1,17 +1,8 @@
-import { defineConfig } from 'tsdown'
+import { definePackageBuild } from '../../tsdown.base.ts'
 
-export default defineConfig({
-  entry: ['src/index.ts'],
-  tsconfig: 'tsconfig.build.json',
-  format: ['esm'],
+export default definePackageBuild({
   dts: false,
-  sourcemap: true,
-  clean: true,
-  platform: 'node',
   target: 'node20',
-  outDir: 'dist',
-  outExtensions: () => ({ js: '.js', dts: '.d.ts' }),
-  deps: {
-    neverBundle: ['@mirid-dev/sendkit-mcp-tools', '@modelcontextprotocol/server'],
-  },
+  // @mirid-dev/sendkit-mcp-tools is private, so it is bundled rather than listed here
+  neverBundle: ['@mirid-dev/sendkit-core', '@modelcontextprotocol/server', 'zod'],
 })

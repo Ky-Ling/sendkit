@@ -1,17 +1,7 @@
-import { defineConfig } from 'tsdown'
+import { definePackageBuild } from '../../tsdown.base.ts'
 
-export default defineConfig({
-  entry: ['src/index.ts'],
-  tsconfig: 'tsconfig.build.json',
-  format: ['esm'],
+export default definePackageBuild({
   dts: true,
-  sourcemap: true,
-  clean: true,
-  platform: 'node',
   target: 'node20',
-  outDir: 'dist',
-  outExtensions: () => ({ js: '.js', dts: '.d.ts' }),
-  deps: {
-    neverBundle: ['zod'],
-  },
+  neverBundle: ['zod'],
 })
