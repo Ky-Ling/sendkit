@@ -29,7 +29,7 @@ console.log(result.messageId, result.chatId, result.sentAt)
 ## Exports
 
 - `sendTelegramMessage(options)`
-- Schemas: `telegramMessageInputSchema` (`chatId`, `message`), `telegramMessageOptionsSchema` (adds `botToken`), `telegramMessageOutputSchema`, `telegramSendMessageRequestSchema`, `telegramSendMessageResponseSchema`
+- Schemas: `telegramMessageInputSchema` (`chatId`, `message`), `telegramMessageOptionsSchema` (adds `botToken`), `telegramMessageOutputSchema`
 - Types: `TelegramMessageInput`, `TelegramMessageOptions`, `TelegramMessageOutput`
 
 ## License
