@@ -1,33 +1,17 @@
 # @mirid-dev/sendkit-mcp-tools
 
-[MCP](https://modelcontextprotocol.io) tool definitions for SendKit, shared by its local and remote MCP servers.
+Private workspace package with the [MCP](https://modelcontextprotocol.io) tool definitions shared by SendKit's local and remote MCP servers. It is not published to npm: tsdown bundles it into [`@mirid-dev/sendkit-local-mcp`](../local-mcp/README.md), and `apps/remote-mcp` runs it from source.
 
-Requires Node.js 20 or later. ESM only.
-
-## Install
-
-```sh
-npm install @mirid-dev/sendkit-mcp-tools @modelcontextprotocol/server
-```
+Versions up to `0.0.1` were published before this package became private. They are deprecated on npm and no longer updated.
 
 ## Usage
 
 ```ts
-import { McpServer } from '@modelcontextprotocol/server'
-import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
 import { registerTelegramTool } from '@mirid-dev/sendkit-mcp-tools'
 
-const server = new McpServer({ name: 'my-server', version: '1.0.0' })
-
 registerTelegramTool(server, () => process.env.TELEGRAM_BOT_TOKEN ?? '')
-
-await server.connect(new StdioServerTransport())
 ```
 
 `registerTelegramTool(server, getBotToken)` registers a `telegram` tool that takes `chatId` and `message` and returns `messageId`, `chatId`, and `sentAt`. `getBotToken` is called on every tool call, so a missing token fails that call instead of server startup.
 
-For a ready-to-run server, use [`@mirid-dev/sendkit-local-mcp`](https://www.npmjs.com/package/@mirid-dev/sendkit-local-mcp).
-
-## License
-
-MIT
+`package.json` exports `src/index.ts` directly, so the package has no build step.
